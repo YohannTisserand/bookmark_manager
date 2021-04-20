@@ -5,8 +5,9 @@ describe Bookmark do
     it 'returns the bookmarks' do
       bookmarks = Bookmark.all
 
-      expect(bookmarks).to include 'http://udemy.com'
-      expect(bookmarks).to include 'http://google.com'
+      expect(bookmarks).to include 'http://www.makersacademy.com'
+      expect(bookmarks).to include 'http://www.google.com'
+      expect(bookmarks).to include 'http://www.destroyallsoftware.com'
     end
   end
 end

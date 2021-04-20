@@ -11,7 +11,9 @@ gem 'simplecov', require: false
 gem 'simplecov-console', require: false
 gem 'sinatra'
 gem 'sinatra-contrib'
+gem 'pg'
 
 group :development, :test do 
   gem "rubocop", "0.79.0" 
 end
+conn = PG.connect( dbname: 'sales' )
