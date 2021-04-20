@@ -16,4 +16,3 @@ gem 'pg'
 group :development, :test do 
   gem "rubocop", "0.79.0" 
 end
-conn = PG.connect( dbname: 'sales' )
