@@ -2,14 +2,14 @@ require 'pg'
 
 feature 'Viewing bookmarks' do
   scenario 'A user can see bookmarks' do
-    Bookmark.create(url: "http://www.makersacademy.com")
-    Bookmark.create(url: "http://www.destroyallsoftware.com")
-    Bookmark.create(url: "http://www.google.com")
+    Bookmark.create("Makers", "http://www.makersacademy.com")
+    Bookmark.create("Destroy All Software", "http://www.destroyallsoftware.com")
+    Bookmark.create("Google", "http://www.google.com")
 
     visit('/bookmarks')
     
-    expect(page).to have_content 'http://www.makersacademy.com'
-    expect(page).to have_content 'http://www.destroyallsoftware.com'
-    expect(page).to have_content 'http://www.google.com'
+    expect(page).to have_content "Makers"
+    expect(page).to have_content 'Destroy All Software'
+    expect(page).to have_content 'Google'
   end
 end
