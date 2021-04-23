@@ -4,6 +4,6 @@ feature 'creating a new bookmark' do
     fill_in('url', with: 'https://www.udemy.com')
     fill_in('title', with: 'Udemy')
     click_button('Submit')
-    expect(page).to have_link('Udemy')
+    expect(page).to have_link('Udemy', href: 'https://www.udemy.com')
   end
 end
