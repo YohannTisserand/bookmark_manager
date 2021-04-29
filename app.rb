@@ -72,5 +72,22 @@ class BookmarkManager < Sinatra::Base
     redirect '/bookmarks'
   end
 
+  get '/sessions/new' do
+    erb :'sessions/new'
+  end
+
+  post '/sessions' do
+    # result = DBConnection.query("SELECT * FROM users WHERE email = '#{params[:email]}'")
+    # user = User.new(result[0]['id'], rsult[0]['email'], result[0]['password'])
+    user = User.authenticate(email: params[:email], password: params[:password])
+    if user
+      session[:user_id] = user.id
+      redirect('/bookmarks')
+    else
+      flash[:notice] = 'Please check your email or password.'
+      redirect('/sessions/new')
+    end
+  end
+
   run! if app_file == $0
 end
