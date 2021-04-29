@@ -1,4 +1,7 @@
 <h2>Bookmark Manager</h2>
+<% if @user %>
+  <h3>Welcome, <%= @user.email %></h3>
+<% end %>
 <%= flash[:notice] %>
 <ul>
   <% @bookmarks.each do |bookmark| %>
@@ -12,6 +15,14 @@
       </form>
       <form action="/bookmarks/<%= bookmark.id %>/edit" method="get">
         <input type="submit" value="Edit" />
+      </form>
+      <ul>
+        <% bookmark.comments.each do |comment| %>
+          <li><%= comment['text'] %></li>
+        <% end %>
+      </ul>
+      <form action="/bookmarks/<%= bookmark.id %>/comments/new" method="get">
+        <input type="submit" value="Add Comment">
       </form>
     </li>
   <% end %>

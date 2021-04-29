@@ -3,6 +3,7 @@ require 'sinatra/reloader'
 require 'sinatra/flash'
 require 'uri'
 require './lib/bookmark'
+require './lib/user'
 require './database_connection_setup'
 
 class BookmarkManager < Sinatra::Base
@@ -17,6 +18,7 @@ class BookmarkManager < Sinatra::Base
   end
 
   get '/bookmarks' do
+    @user = User.find(session[:user_id])
     @bookmarks = Bookmark.all
     erb :'bookmarks/index'
   end
@@ -45,6 +47,29 @@ class BookmarkManager < Sinatra::Base
     p params
     Bookmark.update(id: params[:id], url: params[:url], title: params[:title])
     redirect('/bookmarks')
+  end
+
+  get '/bookmarks/:id/comments/new' do
+    p params
+    @bookmark_id = params[:id]
+    erb :'comments/new'
+  end
+
+  post '/bookmarks/:id/comments' do
+    p params
+    connection = PG.connect(dbname: 'bookmark_manager_test')
+    connection.exec("INSERT INTO comments (text, bookmark_id) VALUES('#{params[:comment]}', '#{params[:id]}');")
+    redirect '/bookmarks'
+  end
+
+  get '/users/new' do
+    erb :'users/new'
+  end
+
+  post '/users' do
+    user = User.create(email: params[:email], password: params[:password])
+    session[:user_id] = user.id
+    redirect '/bookmarks'
   end
 
   run! if app_file == $0

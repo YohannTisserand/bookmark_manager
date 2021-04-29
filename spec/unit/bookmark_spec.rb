@@ -23,10 +23,10 @@ describe Bookmark do
   context '.create' do
     it 'creates a new bookmark' do
       bookmark = Bookmark.create(url: 'https://www.testbookmark.com', title: 'Test bookmark')
-      persisted_data = persisted_data(id: bookmark.id)
+      persisted_data = persisted_data(table: :bookmarks, id: bookmark.id)
       
       expect(bookmark).to be_a Bookmark
-      expect(bookmark.id).to eq persisted_data['id']
+      expect(bookmark.id).to eq persisted_data.first['id']
       expect(bookmark.title).to eq 'Test bookmark'
       expect(bookmark.url).to eq 'https://www.testbookmark.com'
     end
@@ -66,6 +66,17 @@ describe Bookmark do
       expect(result.id).to eq bookmark.id
       expect(result.title).to eq 'Test'
       expect(result.url).to eq 'https://www.testbookmark.com'
+    end
+  end
+
+  context '#comment' do
+    it 'returns comments' do
+      bookmark = Bookmark.create(title: 'Google', url: 'https://www.google.com')
+      DBConnection.query("INSERT INTO comments (id, text, bookmark_id) VALUES(1, 'Google', #{bookmark.id})")
+
+      comment = bookmark.comments.first
+
+      expect(comment['text']).to eq 'Google'
     end
   end
 end
