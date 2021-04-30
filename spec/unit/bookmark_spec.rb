@@ -2,6 +2,7 @@ require 'bookmark'
 require 'database_helpers'
 
 describe Bookmark do
+  let(:comment_class) { double(:comment_class) }
   context '.all' do
     it 'returns a list of bookmarks' do
       connection = PG.connect(dbname: 'bookmark_manager_test')      
@@ -76,7 +77,14 @@ describe Bookmark do
 
       comment = bookmark.comments.first
 
-      expect(comment['text']).to eq 'Google'
+      expect(comment.text).to eq 'Google'
+    end
+
+    it 'calls .where on the Comment class' do
+      bookmark = Bookmark.create(title: 'Google', url: 'http://www.google.com')
+      expect(comment_class).to receive(:where).with(bookmark_id: bookmark.id)
+
+      bookmark.comments(comment_class)
     end
   end
 end

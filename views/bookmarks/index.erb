@@ -18,11 +18,14 @@
       </form>
       <ul>
         <% bookmark.comments.each do |comment| %>
-          <li><%= comment['text'] %></li>
+          <li><%= comment.text %></li>
         <% end %>
       </ul>
       <form action="/bookmarks/<%= bookmark.id %>/comments/new" method="get">
         <input type="submit" value="Add Comment">
+      </form>
+      <form action="/sessions/destroy" method="post">
+        <input type="submit" value="sign out">
       </form>
     </li>
   <% end %>

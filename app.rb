@@ -4,6 +4,7 @@ require 'sinatra/flash'
 require 'uri'
 require './lib/bookmark'
 require './lib/user'
+require_relative './lib/comment'
 require './database_connection_setup'
 
 class BookmarkManager < Sinatra::Base
@@ -18,6 +19,7 @@ class BookmarkManager < Sinatra::Base
   end
 
   get '/bookmarks' do
+    p params
     @user = User.find(session[:user_id])
     @bookmarks = Bookmark.all
     erb :'bookmarks/index'
@@ -38,27 +40,25 @@ class BookmarkManager < Sinatra::Base
   end
 
   get '/bookmarks/:id/edit' do
-    p params
+    # p params
     @bookmark = Bookmark.find(id: params[:id])
     erb :'bookmarks/edit'
   end
 
   patch '/bookmarks/:id' do
-    p params
+    # p params
     Bookmark.update(id: params[:id], url: params[:url], title: params[:title])
     redirect('/bookmarks')
   end
 
   get '/bookmarks/:id/comments/new' do
-    p params
+    # p params
     @bookmark_id = params[:id]
     erb :'comments/new'
   end
 
   post '/bookmarks/:id/comments' do
-    p params
-    connection = PG.connect(dbname: 'bookmark_manager_test')
-    connection.exec("INSERT INTO comments (text, bookmark_id) VALUES('#{params[:comment]}', '#{params[:id]}');")
+    Comment.create(text: params[:comment], bookmark_id: params[:id])
     redirect '/bookmarks'
   end
 
@@ -77,8 +77,6 @@ class BookmarkManager < Sinatra::Base
   end
 
   post '/sessions' do
-    # result = DBConnection.query("SELECT * FROM users WHERE email = '#{params[:email]}'")
-    # user = User.new(result[0]['id'], rsult[0]['email'], result[0]['password'])
     user = User.authenticate(email: params[:email], password: params[:password])
     if user
       session[:user_id] = user.id
@@ -87,6 +85,12 @@ class BookmarkManager < Sinatra::Base
       flash[:notice] = 'Please check your email or password.'
       redirect('/sessions/new')
     end
+  end
+
+  post '/sessions/destroy' do
+    session.clear
+    flash[:notice] = 'You have signed out'
+    redirect('/bookmarks')
   end
 
   run! if app_file == $0
